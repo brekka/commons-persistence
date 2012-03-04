@@ -18,7 +18,7 @@ public abstract class AbstractIdentifiableEntityHibernateDAO<Entity extends Iden
     @Override
     public UUID create(Entity entity) {
         UUID id = UUID.randomUUID();
-        if (entity.getId() != null) {
+        if (entity.getId() == null) {
             entity.setId(id);
         }
         Session session = getCurrentSession();
