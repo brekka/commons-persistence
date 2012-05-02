@@ -19,7 +19,7 @@ public abstract class IdentifiableEntity implements Serializable {
     
     @Id
     @Type(type="pg-uuid")
-    @Column(name="ID")
+    @Column(name="`ID`")
     private UUID id;
 
     public final UUID getId() {
