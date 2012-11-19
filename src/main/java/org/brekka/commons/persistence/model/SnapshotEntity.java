@@ -3,6 +3,7 @@
  */
 package org.brekka.commons.persistence.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -17,7 +18,7 @@ import javax.persistence.TemporalType;
  * @author Andrew Taylor (andrew@brekka.org)
  */
 @MappedSuperclass
-public class SnapshotEntity extends IdentifiableEntity {
+public abstract class SnapshotEntity<ID extends Serializable> implements IdentifiableEntity<ID> {
 
     /**
      * Serial UID

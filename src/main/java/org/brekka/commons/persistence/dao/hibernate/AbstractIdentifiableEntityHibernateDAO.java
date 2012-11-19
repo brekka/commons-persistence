@@ -1,29 +1,25 @@
-package org.brekka.commons.persistence.dao.impl;
+package org.brekka.commons.persistence.dao.hibernate;
 
-import java.util.UUID;
+import java.io.Serializable;
 
 import org.brekka.commons.persistence.dao.EntityDAO;
 import org.brekka.commons.persistence.model.IdentifiableEntity;
 import org.hibernate.Session;
 
-public abstract class AbstractIdentifiableEntityHibernateDAO<Entity extends IdentifiableEntity> implements EntityDAO<UUID, Entity> {
+public abstract class AbstractIdentifiableEntityHibernateDAO<ID extends Serializable, Entity extends IdentifiableEntity<ID>> implements EntityDAO<ID, Entity> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public Entity retrieveById(UUID entityId) {
+    public Entity retrieveById(ID entityId) {
         Session session = getCurrentSession();
         return (Entity) session.get(type(), entityId);
     }
     
     @Override
-    public UUID create(Entity entity) {
-        UUID id = UUID.randomUUID();
-        if (entity.getId() == null) {
-            entity.setId(id);
-        }
+    public ID create(Entity entity) {
         Session session = getCurrentSession();
         session.save(entity);
-        return id;
+        return entity.getId();
     }
 
     @Override
@@ -33,7 +29,7 @@ public abstract class AbstractIdentifiableEntityHibernateDAO<Entity extends Iden
     }
 
     @Override
-    public void delete(UUID entityId) {
+    public void delete(ID entityId) {
         Session session = getCurrentSession();
         Object toDelete = session.get(type(), entityId);
         session.delete(toDelete);
