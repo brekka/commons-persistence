@@ -54,11 +54,14 @@ public abstract class AbstractIdentifiableEntityHibernateDAO<ID extends Serializ
         if (timeout > -1) {
             lockOptions.setTimeOut((int) timeUnit.toMillis(timeout));
         }
-        return (Entity) session.get(type(), entityId, lockOptions);
+        Entity entity = (Entity) session.get(type(), entityId, lockOptions);
+        preRead(entity);
+        return entity;
     }
     
     @Override
     public ID create(Entity entity) {
+        preModify(entity);
         Session session = getCurrentSession();
         session.save(entity);
         return entity.getId();
@@ -66,6 +69,7 @@ public abstract class AbstractIdentifiableEntityHibernateDAO<ID extends Serializ
 
     @Override
     public void update(Entity entity) {
+        preModify(entity);
         Session session = getCurrentSession();
         session.update(entity);
     }
@@ -75,6 +79,24 @@ public abstract class AbstractIdentifiableEntityHibernateDAO<ID extends Serializ
         Session session = getCurrentSession();
         Object toDelete = session.get(type(), entityId);
         session.delete(toDelete);
+    }
+    
+    /**
+     * Called with the entity prior to it being created or updated.
+     * @param entity
+     */
+    protected void preModify(Entity entity) {
+        // Hook
+    }
+    
+    /**
+     * Provide an opportunity to inpect and change the entity prior to be returned
+     * by the retrieve operations.
+     * 
+     * @param entity
+     */
+    protected void preRead(Entity entity) {
+        // Hook
     }
     
     protected abstract Class<Entity> type();

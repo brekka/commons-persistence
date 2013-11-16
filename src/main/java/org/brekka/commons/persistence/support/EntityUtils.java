@@ -19,10 +19,11 @@ package org.brekka.commons.persistence.support;
 import java.io.Serializable;
 
 import org.brekka.commons.persistence.model.IdentifiableEntity;
+import org.hibernate.proxy.HibernateProxy;
 
 /**
  * Utilities for working with entities.
- *
+ * 
  * @author Andrew Taylor (andrew@brekka.org)
  */
 public final class EntityUtils {
@@ -32,17 +33,20 @@ public final class EntityUtils {
      */
     private EntityUtils() {
     }
-    
+
     /**
      * Determine whether two entity instances are the same by their primary key.
      * 
-     * @param left entity on the left
-     * @param right entity on the right
-     * @return true only if both entities have non-null ID's and they are equal as determined by the equals method of the id type.
+     * @param left
+     *            entity on the left
+     * @param right
+     *            entity on the right
+     * @return true only if both entities have non-null ID's and they are equal as determined by the equals method of
+     *         the id type.
      */
-    public static <ID extends Serializable> boolean identityEquals(IdentifiableEntity<ID> left, IdentifiableEntity<ID> right) {
-        if (left != null 
-                && right != null) {
+    public static <ID extends Serializable> boolean identityEquals(final IdentifiableEntity<ID> left,
+            final IdentifiableEntity<ID> right) {
+        if (left != null && right != null) {
             ID leftId = left.getId();
             ID rightId = right.getId();
             if (leftId != null && rightId != null) {
@@ -50,5 +54,13 @@ public final class EntityUtils {
             }
         }
         return false;
+    }
+
+    public static <T> T narrow(final Object object, final Class<T> expected) {
+        if (object instanceof HibernateProxy) {
+            HibernateProxy proxy = (HibernateProxy) object;
+            return expected.cast(proxy.getHibernateLazyInitializer().getImplementation());
+        }
+        return expected.cast(object);
     }
 }

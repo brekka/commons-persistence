@@ -44,16 +44,16 @@ public abstract class SnapshotEntity<ID extends Serializable> implements Identif
     @Column(name="`Created`", nullable=false, updatable=false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date created;
-    
+
 
     public Date getCreated() {
         return created;
     }
-    
+
     /**
      * @param created the created to set
      */
-    public void setCreated(Date created) {
+    public void setCreated(final Date created) {
         this.created = created;
     }
 }
