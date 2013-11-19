@@ -23,6 +23,7 @@ import javax.persistence.LockModeType;
 
 import org.brekka.commons.persistence.dao.EntityDAO;
 import org.brekka.commons.persistence.model.IdentifiableEntity;
+import org.brekka.commons.persistence.support.FirstResultTransformer;
 import org.hibernate.LockMode;
 import org.hibernate.LockOptions;
 import org.hibernate.Session;
@@ -30,24 +31,24 @@ import org.hibernate.Session;
 public abstract class AbstractIdentifiableEntityHibernateDAO<ID extends Serializable, Entity extends IdentifiableEntity<ID>> implements EntityDAO<ID, Entity> {
 
     @Override
-    public Entity retrieveById(ID entityId) {
+    public Entity retrieveById(final ID entityId) {
         return retrieveById(entityId, LockModeType.NONE, -1, null);
     }
-    
+
     /* (non-Javadoc)
      * @see org.brekka.commons.persistence.dao.EntityDAO#retrieveById(java.io.Serializable, javax.persistence.LockModeType)
      */
     @Override
-    public Entity retrieveById(ID entityId, LockModeType lockModeType) {
+    public Entity retrieveById(final ID entityId, final LockModeType lockModeType) {
         return retrieveById(entityId, lockModeType, -1, null);
     }
-    
+
     /* (non-Javadoc)
      * @see org.brekka.commons.persistence.dao.EntityDAO#retrieveById(java.io.Serializable, boolean)
      */
     @SuppressWarnings("unchecked")
     @Override
-    public Entity retrieveById(ID entityId, LockModeType lockModeType, int timeout, TimeUnit timeUnit) {
+    public Entity retrieveById(final ID entityId, final LockModeType lockModeType, final int timeout, final TimeUnit timeUnit) {
         Session session = getCurrentSession();
         LockMode lockMode = getLockMode(lockModeType);
         LockOptions lockOptions = new LockOptions(lockMode);
@@ -58,9 +59,9 @@ public abstract class AbstractIdentifiableEntityHibernateDAO<ID extends Serializ
         preRead(entity);
         return entity;
     }
-    
+
     @Override
-    public ID create(Entity entity) {
+    public ID create(final Entity entity) {
         preModify(entity);
         Session session = getCurrentSession();
         session.save(entity);
@@ -68,47 +69,63 @@ public abstract class AbstractIdentifiableEntityHibernateDAO<ID extends Serializ
     }
 
     @Override
-    public void update(Entity entity) {
+    public void update(final Entity entity) {
         preModify(entity);
         Session session = getCurrentSession();
         session.update(entity);
     }
 
     @Override
-    public void delete(ID entityId) {
+    public void delete(final ID entityId) {
         Session session = getCurrentSession();
         Object toDelete = session.get(type(), entityId);
         session.delete(toDelete);
     }
-    
+
     /**
      * Called with the entity prior to it being created or updated.
      * @param entity
      */
-    protected void preModify(Entity entity) {
+    protected void preModify(final Entity entity) {
         // Hook
     }
-    
+
     /**
      * Provide an opportunity to inpect and change the entity prior to be returned
      * by the retrieve operations.
-     * 
+     *
      * @param entity
      */
-    protected void preRead(Entity entity) {
+    protected void preRead(final Entity entity) {
         // Hook
     }
-    
+
     protected abstract Class<Entity> type();
 
     protected abstract Session getCurrentSession();
-    
+
+
+    protected Entity queryById(final ID entityId, final String idFieldName, final String hql, final LockModeType lockModeType, final int timeout, final TimeUnit timeUnit) {
+        LockMode lockMode = getLockMode(lockModeType);
+        LockOptions lockOptions = new LockOptions(lockMode);
+        if (timeout > -1) {
+            lockOptions.setTimeOut((int) timeUnit.toMillis(timeout));
+        }
+        Entity entity = type().cast(getCurrentSession().createQuery(hql)
+            .setLockOptions(lockOptions)
+            .setParameter(idFieldName, entityId)
+            .setResultTransformer(FirstResultTransformer.INSTANCE)
+            .uniqueResult());
+        preRead(entity);
+        return entity;
+    }
+
     /**
      * Borrowed from org.hibernate.ejb.util.LockModeTypeHelper
      * @param lockMode
      * @return
      */
-    public static LockMode getLockMode(LockModeType lockMode) {
+    public static LockMode getLockMode(final LockModeType lockMode) {
         switch ( lockMode ) {
             case READ:
             case OPTIMISTIC: {
