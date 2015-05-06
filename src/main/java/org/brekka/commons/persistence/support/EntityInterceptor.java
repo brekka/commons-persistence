@@ -55,7 +55,7 @@ public class EntityInterceptor extends EmptyInterceptor {
         if (entity instanceof SnapshotEntity
                 || entity instanceof LongevousEntity) {
             return setProperty("created", new Date(), state, propertyNames, false)
-                || setProperty("modified", new Date(), state, propertyNames, false);
+                 | setProperty("modified", new Date(), state, propertyNames, false);
         }
         return false;
     }
