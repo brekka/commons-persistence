@@ -42,13 +42,13 @@ public abstract class AbstractTypeUserType<T extends EntityType> implements User
     private final Map<String, T> typesMap;
 
     protected AbstractTypeUserType(Map<String, T> typesMap) {
-        this.typesMap = new HashMap<String, T>(typesMap);
+        this.typesMap = new HashMap<>(typesMap);
     }
 
     @SuppressWarnings("unchecked")
     protected <Type extends Enum<?> & EntityType> AbstractTypeUserType(List<Class<Type>> enumTypesList) {
         Class<?> expectedType = returnedClass();
-        Map<String, T> typesMap = new HashMap<String, T>();
+        Map<String, T> tMap = new HashMap<>();
         for (Class<Type> tClass : enumTypesList) {
             if (!tClass.isEnum()) {
                 throw new IllegalStateException(String.format(
@@ -65,7 +65,7 @@ public abstract class AbstractTypeUserType<T extends EntityType> implements User
                             type.getClass().getName(), expectedType.getName()));
                 }
                 
-                T existing = typesMap.put(t.getKey(), t);
+                T existing = tMap.put(t.getKey(), t);
                 if (existing != null) {
                     throw new IllegalStateException(String.format(
                             "Unable to add type key '%s' for enum '%s', the key is already taken by '%s'",
@@ -73,7 +73,7 @@ public abstract class AbstractTypeUserType<T extends EntityType> implements User
                 }
             }
         }
-        this.typesMap = typesMap;
+        this.typesMap = tMap;
     }
 
     /*

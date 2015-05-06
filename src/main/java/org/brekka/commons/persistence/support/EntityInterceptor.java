@@ -42,8 +42,7 @@ public class EntityInterceptor extends EmptyInterceptor {
     public boolean onFlushDirty(Object entity, Serializable id, Object[] currentState, Object[] previousState,
             String[] propertyNames, Type[] types) {
         if (entity instanceof LongevousEntity) {
-            setProperty("modified", new Date(), currentState, propertyNames);
-            return true;
+            return setProperty("modified", new Date(), currentState, propertyNames, true);
         }
         return false;
     }
@@ -55,9 +54,8 @@ public class EntityInterceptor extends EmptyInterceptor {
     public boolean onSave(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) {
         if (entity instanceof SnapshotEntity
                 || entity instanceof LongevousEntity) {
-            setProperty("created", new Date(), state, propertyNames);
-            setProperty("modified", new Date(), state, propertyNames);
-            return true;
+            return setProperty("created", new Date(), state, propertyNames, false)
+                || setProperty("modified", new Date(), state, propertyNames, false);
         }
         return false;
     }
@@ -68,14 +66,16 @@ public class EntityInterceptor extends EmptyInterceptor {
      * @param state
      * @param propertyNames
      */
-    protected void setProperty(String propertyName, Object toValue, Object[] state, String[] propertyNames) {
+    protected boolean setProperty(String propertyName, Object toValue, Object[] state, String[] propertyNames, boolean overwrite) {
         for (int i = 0; i < propertyNames.length; i++) {
             if (propertyNames[i].equals(propertyName)) {
-                state[i] = toValue;
+                if (overwrite || state[i] == null) {
+                    state[i] = toValue;
+                    return true;
+                }
                 break;
             }
         }
+        return false;
     }
-    
-    
 }

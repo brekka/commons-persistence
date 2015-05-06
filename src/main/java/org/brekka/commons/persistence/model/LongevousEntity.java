@@ -65,14 +65,14 @@ public abstract class LongevousEntity<ID extends Serializable> implements Identi
     /**
      * @param created the created to set
      */
-    void setCreated(final Date created) {
+    public void setCreated(final Date created) {
         this.created = created;
     }
 
     /**
      * @param modified the modified to set
      */
-    void setModified(final Date modified) {
+    public void setModified(final Date modified) {
         this.modified = modified;
     }
 }
