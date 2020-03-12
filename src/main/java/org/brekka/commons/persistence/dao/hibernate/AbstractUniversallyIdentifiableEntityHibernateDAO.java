@@ -20,17 +20,15 @@ import java.util.UUID;
 
 import org.brekka.commons.persistence.model.IdentifiableEntity;
 
-public abstract class AbstractUniversallyIdentifiableEntityHibernateDAO<Entity extends IdentifiableEntity<UUID>> 
+public abstract class AbstractUniversallyIdentifiableEntityHibernateDAO<Entity extends IdentifiableEntity<UUID>>
                 extends AbstractIdentifiableEntityHibernateDAO<UUID, Entity> {
 
-    
+
     @Override
-    public UUID create(Entity entity) {
-        UUID id = UUID.randomUUID();
+    public UUID create(final Entity entity) {
         if (entity.getId() == null) {
-            entity.setId(id);
+            entity.setId(UUID.randomUUID());
         }
-        super.create(entity);
-        return id;
+        return super.create(entity);
     }
 }
