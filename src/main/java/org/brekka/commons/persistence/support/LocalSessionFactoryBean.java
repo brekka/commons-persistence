@@ -16,37 +16,30 @@
 
 package org.brekka.commons.persistence.support;
 
+
 import java.util.List;
 
 import org.hibernate.SessionFactory;
-import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
+import org.springframework.orm.hibernate5.LocalSessionFactoryBuilder;
 
 
 /**
- * Enhancement to the Spring {@link rg.springframework.orm.hibernate4.LocalSessionFactoryBean} to provide a way to access the
- * Hibernate configuration.
- *
- * @author Andrew Taylor (andrew@brekka.org)
+ * Enhancement to the Spring {@link org.springframework.orm.hibernate5.LocalSessionFactoryBean}
+ * to provide a way to access the Hibernate configuration.
  */
-public class LocalSessionFactoryBean extends org.springframework.orm.hibernate4.LocalSessionFactoryBean {
+public class LocalSessionFactoryBean extends org.springframework.orm.hibernate5.LocalSessionFactoryBean {
 
     private List<ConfigurationPostProcessor> configurationPostProcessors;
-    
-    /* (non-Javadoc)
-     * @see org.springframework.orm.hibernate4.LocalSessionFactoryBean#buildSessionFactory(org.springframework.orm.hibernate4.LocalSessionFactoryBuilder)
-     */
+
     @Override
-    protected SessionFactory buildSessionFactory(LocalSessionFactoryBuilder sfb) {
+    protected SessionFactory buildSessionFactory(final LocalSessionFactoryBuilder sfb) {
         for (ConfigurationPostProcessor postProcessor : configurationPostProcessors) {
             postProcessor.postProcess(sfb);
         }
         return super.buildSessionFactory(sfb);
     }
-    
-    /**
-     * @param configurationPostProcessors the configurationPostProcessors to set
-     */
-    public void setConfigurationPostProcessors(List<ConfigurationPostProcessor> configurationPostProcessors) {
+
+    public void setConfigurationPostProcessors(final List<ConfigurationPostProcessor> configurationPostProcessors) {
         this.configurationPostProcessors = configurationPostProcessors;
     }
 }
