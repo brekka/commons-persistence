@@ -60,6 +60,6 @@
   </dependencies>
 
   <properties>
-    <hibernate-version>4.1.7.Final</hibernate-version>
+    <hibernate-version>5.6.7.Final</hibernate-version>
   </properties>
 </project>

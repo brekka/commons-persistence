@@ -18,12 +18,7 @@ package org.brekka.commons.persistence.support;
 
 import org.hibernate.cfg.Configuration;
 
-/**
- * TODO Description of ConfigurationPostProcessor
- *
- * @author Andrew Taylor (andrew@brekka.org)
- */
 public interface ConfigurationPostProcessor {
 
-    void postProcess(Configuration configuration) ;
+    void postProcess(Configuration configuration);
 }

@@ -24,34 +24,21 @@ import org.brekka.commons.persistence.model.SnapshotEntity;
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.type.Type;
 
-/**
- * @author Andrew Taylor (andrew@brekka.org)
- *
- */
 public class EntityInterceptor extends EmptyInterceptor {
 
-    /**
-     * Serial UID
-     */
     private static final long serialVersionUID = 2498606006650979836L;
 
-    /* (non-Javadoc)
-     * @see org.hibernate.EmptyInterceptor#onFlushDirty(java.lang.Object, java.io.Serializable, java.lang.Object[], java.lang.Object[], java.lang.String[], org.hibernate.type.Type[])
-     */
     @Override
-    public boolean onFlushDirty(Object entity, Serializable id, Object[] currentState, Object[] previousState,
-            String[] propertyNames, Type[] types) {
+    public boolean onFlushDirty(final Object entity, final Serializable id, final Object[] currentState, final Object[] previousState,
+            final String[] propertyNames, final Type[] types) {
         if (entity instanceof LongevousEntity) {
             return setProperty("modified", new Date(), currentState, propertyNames, true);
         }
         return false;
     }
-    
-    /* (non-Javadoc)
-     * @see org.hibernate.EmptyInterceptor#onSave(java.lang.Object, java.io.Serializable, java.lang.Object[], java.lang.String[], org.hibernate.type.Type[])
-     */
+
     @Override
-    public boolean onSave(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) {
+    public boolean onSave(final Object entity, final Serializable id, final Object[] state, final String[] propertyNames, final Type[] types) {
         if (entity instanceof SnapshotEntity
                 || entity instanceof LongevousEntity) {
             return setProperty("created", new Date(), state, propertyNames, false)
@@ -60,13 +47,7 @@ public class EntityInterceptor extends EmptyInterceptor {
         return false;
     }
 
-    /**
-     * @param string
-     * @param date
-     * @param state
-     * @param propertyNames
-     */
-    protected boolean setProperty(String propertyName, Object toValue, Object[] state, String[] propertyNames, boolean overwrite) {
+    protected boolean setProperty(final String propertyName, final Object toValue, final Object[] state, final String[] propertyNames, final boolean overwrite) {
         for (int i = 0; i < propertyNames.length; i++) {
             if (propertyNames[i].equals(propertyName)) {
                 if (overwrite || state[i] == null) {

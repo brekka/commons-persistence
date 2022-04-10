@@ -17,35 +17,24 @@
 package org.brekka.commons.persistence.support;
 
 import org.hibernate.cfg.Configuration;
-import org.hibernate.type.TypeResolver;
 import org.hibernate.usertype.UserType;
 
 /**
  * Add a user type instance to the configuration.
- *
- * @author Andrew Taylor (andrew@brekka.org)
  */
 public class UserTypeRegisteringConfigurationPostProcessor implements ConfigurationPostProcessor {
 
     private final UserType userType;
-    
+
     private final String[] keys;
-    
-    /**
-     * @param userType
-     */
-    public UserTypeRegisteringConfigurationPostProcessor(UserType userType, String... keys) {
+
+    public UserTypeRegisteringConfigurationPostProcessor(final UserType userType, final String... keys) {
         this.userType = userType;
         this.keys = keys;
     }
 
-    /* (non-Javadoc)
-     * @see org.brekka.commons.persistence.support.ConfigurationPostProcessor#postProcess(org.hibernate.cfg.Configuration)
-     */
     @Override
-    public void postProcess(Configuration configuration) {
-        TypeResolver typeResolver = configuration.getTypeResolver();
-        typeResolver.registerTypeOverride(userType, keys);
+    public void postProcess(final Configuration configuration) {
+        configuration.registerTypeOverride(userType, keys);
     }
-
 }

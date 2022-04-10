@@ -22,18 +22,13 @@ import org.brekka.commons.persistence.model.EntityType;
 
 /**
  * Map any entity user type defined within the typesMap.
- *
- * @author Andrew Taylor (andrew@brekka.org)
  */
 public class EntityTypeUserType extends AbstractTypeUserType<EntityType> {
 
-    public EntityTypeUserType(Map<String, EntityType> typesMap) {
+    public EntityTypeUserType(final Map<String, EntityType> typesMap) {
         super(typesMap);
     }
-    
-    /* (non-Javadoc)
-     * @see org.hibernate.usertype.UserType#returnedClass()
-     */
+
     @Override
     public Class<EntityType> returnedClass() {
         return EntityType.class;
